@@ -1,7 +1,7 @@
-// HELPER FUNCTIONS
 
-// Returns and removes a URL of specified link_type from Chrome storage
-// Defaults to oldest link unless 'newest' or 'random' is chosen by user
+
+/* Returns and removes a URL of specified link_type from Chrome storage
+Defaults to oldest link unless 'newest' or 'random' is chosen by user */
 function getUrl(link_type, result) {
     if (link_type === "newest") {
         var active_url = result.url_stack.pop();
@@ -16,7 +16,7 @@ function getUrl(link_type, result) {
     return active_url;
 }
 
-// Loads a saved URL in new Chrome tab
+/* Loads a saved URL in new Chrome tab */
 function loadLink(link_type) {
     chrome.storage.sync.get("url_stack", function (result) {
         var active_url = getUrl(link_type, result);
@@ -29,7 +29,7 @@ function loadLink(link_type) {
     });
 }
 
-// Adds a new URL object to the existing saved link array
+/* Adds a new URL object to the existing saved link array */
 function saveLink(tab) {
     var new_url = {"url": tab.url, "saved": Date.now()};
     chrome.storage.sync.get("url_stack", function (result) {
@@ -42,13 +42,13 @@ function saveLink(tab) {
     });
 }
 
-// Saves updated link list to Chrome storage
+/* Saves updated link list to Chrome storage */
 function saveList(url_list) {
     chrome.storage.sync.set(url_list);
     updateBadge(url_list.url_stack.length);
 }
 
-// Updates count of saved links displayed in browser action badge
+/* Updates count of saved links displayed in browser action badge */
 function updateBadge(url_count) {
     if (url_count > 0) {
         chrome.browserAction.setBadgeText({"text": url_count.toString()});
@@ -59,9 +59,13 @@ function updateBadge(url_count) {
 }
 
 
-// REGISTER EVENT HANDLERS
+/*
+=================================================
+EVENT HANDLERS
+=================================================
+*/
 
-// Add actions to context menu during installation
+/* Add actions to context menu during installation */
 chrome.runtime.onInstalled.addListener(function () {
     actions = [
         {"id": "save", "title": "Save this page"},
@@ -82,7 +86,7 @@ chrome.runtime.onInstalled.addListener(function () {
     });
 });
 
-// Save URL or load a saved URL from browser action context menu
+/* Save URL or load a saved URL from browser action context menu */
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
     if (info.menuItemId === "save") {
         saveLink(tab);
@@ -91,5 +95,5 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     }
 });
 
-// Open oldest URL in new tab on browser action click
+/* Open oldest URL in new tab on browser action click */
 chrome.browserAction.onClicked.addListener(loadLink);
