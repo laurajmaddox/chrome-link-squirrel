@@ -21,7 +21,7 @@
         }
     },
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["background.min.js"],
         "persistent": false
     }
 }
